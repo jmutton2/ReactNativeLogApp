@@ -2,17 +2,16 @@ import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import HistoryPage from './Components/HistoryPage';
-import OrganizePage from './Components/OrganizedPage';
 import EntryPage from './Components/EntryPage';
-import ReadablePage from './Components/ReadablePage';
 import Header from './Components/header';
 
 export default function App() {
 
-  const [text, setText] = useState('');
-  const [key, setKey] = useState('');
+  const RandomNumber = Math.floor(Math.random() * 100) + 1 ;
 
-  const [pos, setPos] = useState('OP');
+  const [text, setText] = useState('');
+
+  const [pos, setPos] = useState('EP');
   const [entries, setEntries] = useState([
     { text: 'entry 1', key: 'Sample Entry 1'},
     { text: 'entry 2', key: 'Sample Entry 2'},
@@ -23,26 +22,24 @@ export default function App() {
     setPos(childData)
   }
 
-  const titleChangeHandler = (val) => {
-    setKey(val);
-  }
-  const bodyChangeHandler = (val) => {
+  const ChangeHandler = (val) => {
     setText(val);
   }
- 
+
   const submitHandler = (text) => {
     setEntries((prevEntries) => {
       return [
-        { text: text, key: key },
+        { text: text, key: RandomNumber },
         ...prevEntries
       ];
     })
   }
 
-  const entryPressHandler = () => {
-    setPos('RP');
+  const deleteHandler = (key) => {
+    setEntries((prevEntries) => {
+      return prevEntries.filter(todo => todo.key != key);
+    });
   }
-
 
   return (
     <View style={styles.MAIN}>
@@ -50,19 +47,16 @@ export default function App() {
       <View style={styles.container}>
         {
           {
-            'OP': <OrganizePage />,
             'HP': <HistoryPage 
-                    entryPressHandler={entryPressHandler} 
                     submitHandler={submitHandler} 
                     entry={entries} 
+                    deleteHandler={deleteHandler}
                   />,
             'EP': <EntryPage 
-                    titleChangeHandler={titleChangeHandler}
-                    bodyChangeHandler={bodyChangeHandler} 
+                    titleChangeHandler={ChangeHandler}
                     submitHandler={submitHandler} 
                     text={text} 
-                  />,
-            'RP': <ReadablePage tempKey={key} tempText={text} />
+                  />
           }[pos]
         }
       </View>
